@@ -1,0 +1,7 @@
+﻿  Entity.cpp
+C:\Users\usuario_local\Documents\GC\Proyecto\IG1App\Entity.cpp(1079,22): warning C4018: '<=': no coinciden signed/unsigned
+C:\Users\usuario_local\Documents\GC\Proyecto\IG1App\Entity.cpp(1093,22): warning C4018: '<=': no coinciden signed/unsigned
+C:\Users\usuario_local\Documents\GC\Proyecto\IG1App\Entity.cpp(1107,22): warning C4018: '<=': no coinciden signed/unsigned
+C:\Users\usuario_local\Documents\GC\Proyecto\IG1App\Entity.cpp(1125,22): warning C4018: '<=': no coinciden signed/unsigned
+C:\Users\usuario_local\Documents\GC\Proyecto\IG1App\Entity.cpp(1394,55): warning C4305: 'argumento': truncamiento de 'const double' a 'GLfloat'
+  IG1App.vcxproj -> C:\Users\usuario_local\Documents\GC\Proyecto\bin\IG1AppDebug.exe
