@@ -350,7 +350,7 @@ IG1App::key(unsigned int key)
 			//la guardamos en imagen .bpm
 			textura->download("../assets/images/captura.bmp");
 			break;
-		case 'a':
+/*case 'a':
 			mCamera->moveLR(1);
 			break;
 		case 'd':
@@ -364,7 +364,7 @@ IG1App::key(unsigned int key)
 			break;
 		case 'W':
 			mCamera->moveFB(1);
-			break;
+			break;*/
 		case 'S':
 			mCamera->moveFB(-1);
 			break;

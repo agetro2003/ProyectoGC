@@ -1050,14 +1050,14 @@ ColorMaterialEntity::render(const glm::mat4& modelViewMat) const
 }
 
 void
-ColorMaterialEntity::rotate(GLfloat angulo, glm::vec3 eje) {
+Abs_Entity::rotate(GLfloat angulo, glm::vec3 eje) {
 
 	glm::mat4 rotateMat = glm::rotate(glm::mat4(1.0), angulo, eje);
 	mModelMat = rotateMat * mModelMat;
 }
 
 void
-ColorMaterialEntity::move(glm::vec3 mov_direccion) {
+Abs_Entity::move(glm::vec3 mov_direccion) {
 
 	glm::mat4 translateMat = glm::translate(glm::mat4(1.0), mov_direccion);
 	mModelMat = translateMat * mModelMat;
@@ -1401,11 +1401,32 @@ Granjero::Granjero() {
 }
 
 Persona::Persona() {
-	glm::vec3 color = glm::vec3(0.0f, 1.0f, 1.0f);
-	Sphere* cabeza = new Sphere(100, 60, 60);
+	glm::vec3 color = glm::vec3(1.0f, 0.0f, 0.0f);
+	Sphere* cabeza = new Sphere(80, 60, 60);
 	cabeza->setColor(color);
 	cabeza->move(glm::vec3(0.0f, 100.0f, 0.0f));
 	addEntity(cabeza);
+
+	Sphere* ojo1 = new Sphere(20, 60, 60);
+	ojo1->setColor(glm::vec3(1, 1, 1));
+	ojo1->move(glm::vec3(70.0f, 120.0f, 30.0f));
+	addEntity(ojo1);
+
+	Sphere* pupila1 = new Sphere(10, 60, 60);
+	pupila1 -> setColor(glm::vec3(0, 0, 0));
+	pupila1->move(glm::vec3(85.0f, 120.0f, 30.0f));
+	addEntity(pupila1);
+
+	Sphere* ojo2 = new Sphere(20, 60, 60);
+	ojo2->setColor(glm::vec3(1, 1, 1));
+	ojo2->move(glm::vec3(70.0f, 120.0f, -30.0f));
+	addEntity(ojo2);
+
+	Sphere* pupila2 = new Sphere(10, 60, 60);
+	pupila2->setColor(glm::vec3(0, 0, 0));
+	pupila2->move(glm::vec3(85.0f, 120.0f, -30.0f));
+	addEntity(pupila2);
+
 
 	Cone* cuerpo = new Cone(150, 8, 8, 60, 60);
 	cuerpo->setColor(color);
@@ -1424,19 +1445,34 @@ Persona::Persona() {
 	brazo1->rotate(-45, glm::vec3(1, 0, 0));
 
 	brazo1->setColor(color);
-	brazo1->move(glm::vec3(0.0f,-20.0f,100.0f));
+	brazo1->move(glm::vec3(0.0f,0.0f,90.0f));
 
 	addEntity(brazo1);
-
 	Cone* brazo2 = new Cone(80, 2, 2, 60, 60);
 	brazo2->setColor(color);
 	brazo2->rotate(45, glm::vec3(1, 0, 0));
-	brazo2->move(glm::vec3(0.0f,-20.0f, -100.0f));
-
+	brazo2->move(glm::vec3(0.0f,0.0f, -90.0f));
 
 	addEntity(brazo2);
 
+}
 
-	
+void
+Persona::walk(GLint dir) {
+	switch (dir) {
+	case 1: 
+		move(glm::vec3(0, 0, -1));
+		break;
+	case 2:
+		move(glm::vec3(-1, 0, 0));
+		break;
+	case 3:
+		move(glm::vec3(0, 0, 1));
+		break;
+	case 4:
+		move(glm::vec3(1, 0, 0));
+		break;
+	}
+	currentDir = dir;
 }
 

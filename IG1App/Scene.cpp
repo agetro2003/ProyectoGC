@@ -78,9 +78,41 @@ Scene1::init()
 	//Circunferencia magenta
 //	gObjects.push_back(new RegularPolygon(360, 200.0, glm::dvec4(1.0, 0.0, 1.0, 1.0)));
 
-	Persona* persona = new Persona();
 	gObjects.push_back(persona);
+	persona->scale(glm::vec3(0.2, 0.2, 0.2));
+	persona->move(glm::vec3(0, 30, 0));
+	Ground2* ground = new Ground2(400.0, 400.0, 4, 4);
+	ground->rotate();
+	gObjects.push_back(ground);
 
+}
+
+
+bool
+Scene1::handleKey(unsigned int key) {
+	switch (key) {
+	case 'w':
+		persona->walk(1);
+		return true;
+		break;
+	case 'a':
+		persona->walk(2);
+		return true;
+		break;
+	case 's':
+		persona->walk(3);
+
+		return true;
+		break;
+	case 'd':
+		persona->walk(4);
+
+		return true;
+		break;
+	default:
+		return false;
+		break;
+	}
 }
 
 void

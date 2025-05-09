@@ -25,6 +25,8 @@ public:
 	// modeling matrix
 	glm::mat4 const& modelMat() const { return mModelMat; };
 	void setModelMat(glm::mat4 const& aMat) { mModelMat = aMat; };
+	void move(glm::vec3 mov_direccion);
+	void rotate(GLfloat angulo, glm::vec3 eje);
 
 	// load or unload entity data into the GPU
 	virtual void load();
@@ -282,8 +284,6 @@ public:
 	static bool mShowNormals;
 	static void toggleShowNormals();
 	void setShader(Shader* shader) { mShader = shader; }
-	void rotate(GLfloat angulo, glm::vec3 eje);
-	void move(glm::vec3 mov_direccion);
 	Texture* mTexture = nullptr;
 	void setColor(glm::vec3 color);
 protected:
@@ -390,6 +390,9 @@ class Persona : public CompoundEntity
 {
 public: 
 	Persona();
+	void walk(GLint dir);
+	int currentDir = 4 ;
 };
+
 
 #endif //_H_Entities_H_

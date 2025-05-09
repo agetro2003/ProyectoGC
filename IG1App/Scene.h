@@ -68,6 +68,8 @@ class Scene1 : public Scene {
 public:
 	Scene1() = default;
 	~Scene1() = default;
+	Persona* persona = new Persona();
+	bool handleKey(unsigned int key) override;
 
 	void init() override;
 };
