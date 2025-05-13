@@ -448,8 +448,10 @@ void
 IG1App::specialkey(int key, int scancode, int action, int mods)
 {
 	// Only interested in press events
-	if (action == GLFW_RELEASE)
+	if (action == GLFW_RELEASE)	{ 
+		mNeedsRedisplay = mScenes[mCurrentScene]->handleSpecialKey(key, scancode, action, mods);
 		return;
+	}
 
 	bool need_redisplay = true;
 
@@ -493,7 +495,7 @@ IG1App::specialkey(int key, int scancode, int action, int mods)
 			mouse(key, action, mods);
 			break;
 		default:
-			need_redisplay = false;
+			need_redisplay = mScenes[mCurrentScene]->handleSpecialKey(key, scancode, action, mods);
 			break;
 	} // switch
 

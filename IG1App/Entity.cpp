@@ -1203,7 +1203,7 @@ void
 CompoundEntity::rotate(GLfloat angulo, glm::vec3 eje) {
 
 	glm::mat4 rotateMat = glm::rotate(glm::mat4(1.0), angulo, eje);
-	mModelMat = rotateMat * mModelMat;
+	mModelMat = mModelMat *  rotateMat  ;
 	
 	/*
 	for (Abs_Entity* obj : gObjects) {
@@ -1431,34 +1431,88 @@ Persona::Persona() {
 	Cone* cuerpo = new Cone(150, 8, 8, 60, 60);
 	cuerpo->setColor(color);
 	addEntity(cuerpo);
-	Cone* pierna1 = new Cone(150, 2, 2, 60, 60);
-	pierna1->move(glm::vec3(0.0f, -100.0f, 30.0f));
+
+
+	Cone* pierna1 = new Cone(150, 3, 3, 60, 60);
 	pierna1->setColor(color);
-	addEntity(pierna1);
-	Cone* pierna2 = new Cone(150, 2, 2, 60, 60);
+	pierna1->move(glm::vec3(0.0f, -75.0f, 0.0f));
+	pierna1Node->addEntity(pierna1);
+	pierna1Node->move(glm::vec3(0.0f, -25.0f, 30.0f));
+
+	addEntity(pierna1Node);
+
+	Cone* pierna2 = new Cone(150, 3, 3, 60, 60);
 	pierna2->setColor(color);
-	pierna2->move(glm::vec3(0.0f, -100.0f, -30.0f));
+	pierna2->move(glm::vec3(.0f, -75.0f, 0.0f));
+	pierna2Node->addEntity(pierna2);
+	pierna2Node->move(glm::vec3(0.0f, -25.0f, -30.0f));
+	
+	addEntity(pierna2Node);
 
-	addEntity(pierna2);
-
-	Cone* brazo1 = new Cone(80, 2, 2, 60, 60);
-	brazo1->rotate(-45, glm::vec3(1, 0, 0));
+	Cone* brazo1 = new Cone(80, 3, 3, 60, 60);
 
 	brazo1->setColor(color);
-	brazo1->move(glm::vec3(0.0f,0.0f,90.0f));
+	brazo1->move(glm::vec3(0.0f, -40.0f, 0.0f));
 
-	addEntity(brazo1);
-	Cone* brazo2 = new Cone(80, 2, 2, 60, 60);
+	Sphere* hombro1 = new Sphere(15, 60, 60);
+	hombro1->setColor(color);
+	brazo1Node->addEntity(hombro1);
+	brazo1Node->addEntity(brazo1);
+	brazo1Node->rotate(glm::radians(-15.0f), glm::vec3(1, 0, 0));
+	brazo1Node->move(glm::vec3(0.0f,25.0f,65.0f));
+
+	addEntity(brazo1Node);
+
+	Cone* brazo2 = new Cone(80, 3, 3, 60, 60);
+	Sphere* hombro2 = new Sphere(15, 60, 60);
+	hombro2->setColor(color);
+	brazo2Node->addEntity(hombro2);
 	brazo2->setColor(color);
-	brazo2->rotate(45, glm::vec3(1, 0, 0));
-	brazo2->move(glm::vec3(0.0f,0.0f, -90.0f));
+	brazo2->move(glm::vec3(0.0f, -40.0f, 0.0f));
+	brazo2Node->addEntity(brazo2);
+	brazo2Node->rotate(glm::radians(15.0f), glm::vec3(1, 0, 0));
+	brazo2Node->move(glm::vec3(0.0f,25.0f, -65.0f));
 
-	addEntity(brazo2);
+	addEntity(brazo2Node);
 
 }
 
 void
-Persona::walk(GLint dir) {
+Persona::walk(GLint dir, GLint action) {
+	int diff = dir - currentDir;
+	vec3 initialPos = glm::vec3(mModelMat[3]);
+	move(-initialPos);
+	rotate(glm::radians(90.0f * diff), glm::vec3(0.0f, 1.0f, 0.0f));
+	move(initialPos);
+
+	if (action == 1 || action == 2) {
+		if (angle < 50) {
+			pierna1Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+			pierna2Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+			brazo1Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+			brazo2Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+			angle += 10;
+		}
+		else if (angle < 150) {
+			pierna1Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+			pierna2Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+			brazo1Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+			brazo2Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+			angle += 10;
+		}
+		else if (angle < 200) {
+			pierna1Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+			pierna2Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+			brazo1Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+			brazo2Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+			angle += 10;
+		}
+		else {
+			angle = 0;
+		}
+ 	}
+
+
 	switch (dir) {
 	case 1: 
 		move(glm::vec3(0, 0, -1));
@@ -1473,6 +1527,7 @@ Persona::walk(GLint dir) {
 		move(glm::vec3(1, 0, 0));
 		break;
 	}
+
 	currentDir = dir;
 }
 

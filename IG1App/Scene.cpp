@@ -89,23 +89,24 @@ Scene1::init()
 
 
 bool
-Scene1::handleKey(unsigned int key) {
+Scene1::handleSpecialKey(int key, int scancode, int action, int mods) {
+
 	switch (key) {
-	case 'w':
-		persona->walk(1);
+	case 87:
+		persona->walk(1, action);
 		return true;
 		break;
-	case 'a':
-		persona->walk(2);
+	case 65:
+		persona->walk(2, action);
 		return true;
 		break;
-	case 's':
-		persona->walk(3);
+	case 83:
+		persona->walk(3, action);
 
 		return true;
 		break;
-	case 'd':
-		persona->walk(4);
+	case 68:
+		persona->walk(4, action);
 
 		return true;
 		break;
@@ -452,5 +453,10 @@ Scene::update()
 
 bool 
 Scene::handleKey(unsigned int key) {
+	return false;
+}
+
+bool
+Scene::handleSpecialKey(int key, int scancode, int action, int mods) {
 	return false;
 }

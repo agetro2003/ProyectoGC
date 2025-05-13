@@ -390,8 +390,16 @@ class Persona : public CompoundEntity
 {
 public: 
 	Persona();
-	void walk(GLint dir);
+	void walk(GLint dir, GLint action);
 	int currentDir = 4 ;
+
+	CompoundEntity* brazo1Node = new CompoundEntity();
+	CompoundEntity* brazo2Node = new CompoundEntity();
+	CompoundEntity* pierna1Node = new CompoundEntity();
+	CompoundEntity* pierna2Node = new CompoundEntity();
+
+	int angle = 0;
+	
 };
 
 

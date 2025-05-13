@@ -24,6 +24,7 @@ public:
 	virtual void update();
 
 	virtual bool handleKey(unsigned int key);
+	virtual bool handleSpecialKey(int key, int scancode, int action, int mods);
 
 	void render(Camera const& cam) const;
 
@@ -69,7 +70,7 @@ public:
 	Scene1() = default;
 	~Scene1() = default;
 	Persona* persona = new Persona();
-	bool handleKey(unsigned int key) override;
+	bool handleSpecialKey(int key, int scancode, int action, int mods) override;
 
 	void init() override;
 };
