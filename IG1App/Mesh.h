@@ -29,7 +29,6 @@ public:
 	static Mesh* generateStar3DTexCor(GLdouble re, GLuint np, GLdouble h); //Estrella con textura -Ap27
 	static Mesh* generateGlassParapet(GLdouble width, GLdouble height); //apartado 32
 
-
 	Mesh();
 	virtual ~Mesh();
 
@@ -84,6 +83,7 @@ public:
 	static IndexMesh* generateIndexedBox(GLdouble l);
 	static IndexMesh* generateWingAdvancedTIE(GLdouble x, GLdouble y, GLdouble z);
 	static IndexMesh* generateWingAdvancedTIETexCor(GLdouble x, GLdouble y, GLdouble z);
+	static IndexMesh* generateWallWithDoor(GLdouble width, GLdouble height); //apartado 33
 
 private:
 	GLuint mIBO;

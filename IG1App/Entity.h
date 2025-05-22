@@ -401,6 +401,11 @@ public:
 	int angle = 0;
 	
 };
+class WallWithDoor : public ColorMaterialEntity
+{
+public:
+	WallWithDoor(GLdouble width, GLdouble height, glm::dvec4 mColor = glm::dvec4(0.0, 0.0, 0.0, 1.0));
+};
 
 
 #endif //_H_Entities_H_

@@ -1531,3 +1531,8 @@ Persona::walk(GLint dir, GLint action) {
 	currentDir = dir;
 }
 
+WallWithDoor::WallWithDoor(GLdouble width, GLdouble height, glm::dvec4 mColor)
+{
+	mMesh = IndexMesh::generateWallWithDoor(width, height);
+}
+

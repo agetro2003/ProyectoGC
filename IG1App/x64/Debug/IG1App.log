@@ -1,7 +1,6 @@
-﻿  Entity.cpp
-C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Entity.cpp(1079,22): warning C4018: '<=': no coinciden signed/unsigned
-C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Entity.cpp(1093,22): warning C4018: '<=': no coinciden signed/unsigned
-C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Entity.cpp(1107,22): warning C4018: '<=': no coinciden signed/unsigned
-C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Entity.cpp(1125,22): warning C4018: '<=': no coinciden signed/unsigned
-C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Entity.cpp(1394,55): warning C4305: 'argumento': truncamiento de 'const double' a 'GLfloat'
+﻿  Scene.cpp
+C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Scene.cpp(410,25): warning C4305: 'argumento': truncamiento de 'double' a 'GLclampf'
+C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Scene.cpp(410,20): warning C4305: 'argumento': truncamiento de 'double' a 'GLclampf'
+C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Scene.cpp(410,15): warning C4305: 'argumento': truncamiento de 'double' a 'GLclampf'
+C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Scene.cpp(337,1): warning C4715: 'Scene8::handleKey': no todas las rutas de acceso de control devuelven un valor
   IG1App.vcxproj -> C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\bin\IG1AppDebug.exe

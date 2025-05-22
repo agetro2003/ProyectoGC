@@ -831,3 +831,47 @@ void IndexMesh::buildNormalVectors() {
 	}
 
 }
+
+IndexMesh*
+IndexMesh::generateWallWithDoor(GLdouble width, GLdouble height) {
+	IndexMesh* mesh = new IndexMesh();
+	mesh->mPrimitive = GL_TRIANGLES;
+	GLdouble doorHeight = 100;
+	GLdouble doorWidth = 60;
+	GLdouble my = height * 0.5;
+	GLdouble mw = width * 0.5;
+	
+	// indices que definen la pared
+	std::vector<GLuint> indices = {
+	0, 1, 2,
+	2, 1, 3,
+	3, 4, 5,
+	3, 5, 6,
+	6, 7, 8,
+	6, 8, 9,
+	};
+
+	mesh->vIndexes = indices;
+
+	// vertices de la pared
+	std::vector<vec3> vertices = {
+	{-mw, -my, 0}, //0
+	{-doorWidth * 0.5, -my, 0}, //1
+	{-mw, my, 0}, //2
+	{ -doorWidth * 0.5, my, 0 }, //3
+	{-doorWidth * 0.5, -my + doorHeight, 0}, //4
+	{doorWidth * 0.5, -my + doorHeight, 0}, //5
+	{doorWidth * 0.5, my, 0}, //6
+	{mw, my, 0}, //7
+	{mw, -my, 0}, //8
+	{doorWidth * 0.5, -my, 0}, //9
+	};
+	mesh->vVertices = vertices;
+	// calculo de las normales
+	mesh->buildNormalVectors();
+
+	mesh->mNumVertices = mesh->vVertices.size();
+
+	return mesh;
+
+}

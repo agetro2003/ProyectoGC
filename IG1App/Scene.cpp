@@ -77,7 +77,10 @@ Scene1::init()
 	//gObjects.push_back(new RegularPolygon(3, 200.0, glm::dvec4(0.0, 1.0, 1.0, 1.0)));
 	//Circunferencia magenta
 //	gObjects.push_back(new RegularPolygon(360, 200.0, glm::dvec4(1.0, 0.0, 1.0, 1.0)));
-
+	WallWithDoor* wallWithDoor = new WallWithDoor(400.0, 160.0);
+	wallWithDoor->move(glm::vec3(0, 80.0, -200));
+	wallWithDoor->setColor(glm::dvec4(0.0, 0.0, 1.0, 1.0));
+	gObjects.push_back(wallWithDoor);
 	gObjects.push_back(persona);
 	persona->scale(glm::vec3(0.2, 0.2, 0.2));
 	persona->move(glm::vec3(0, 30, 0));
