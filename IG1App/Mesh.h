@@ -80,10 +80,17 @@ public:
 	void draw() const override;
 	void buildNormalVectors();
 	static IndexMesh* generateByRevolution(const std::vector<glm::vec2>& profile, GLuint nSamples, GLfloat angleMax = 2 * std::numbers::pi);
+	static IndexMesh* generateByRevolutionTexCor(const std::vector<glm::vec2>& profile, GLuint nSamples, GLfloat angleMax = 2 * std::numbers::pi);
 	static IndexMesh* generateIndexedBox(GLdouble l);
 	static IndexMesh* generateWingAdvancedTIE(GLdouble x, GLdouble y, GLdouble z);
 	static IndexMesh* generateWingAdvancedTIETexCor(GLdouble x, GLdouble y, GLdouble z);
-	static IndexMesh* generateWallWithDoor(GLdouble width, GLdouble height); //apartado 33
+	static IndexMesh* generateWallWithDoor(GLdouble width, GLdouble height);
+	static IndexMesh* generateWallWithDoorTexCor(GLdouble width, GLdouble height);
+	static IndexMesh* generateWall(GLdouble width, GLdouble height);
+	static IndexMesh* generateWallTexCor(GLdouble width, GLdouble height, GLint x);
+	static IndexMesh* generateWallWithWindow(GLdouble width, GLdouble height);
+	static IndexMesh* generateWallWithWindowTexCor(GLdouble width, GLdouble height);
+	static IndexMesh* generateOrthohedron(GLdouble length, GLdouble width, GLdouble height); 
 
 private:
 	GLuint mIBO;

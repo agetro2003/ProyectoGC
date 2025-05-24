@@ -991,7 +991,7 @@ Grass::render(const glm::mat4& modelViewMat) const {
 }
 
 EntityWithMaterial::EntityWithMaterial() {
-	mShader = Shader::get("light");
+	mShader = Shader::get("texturelight");
 }
 void
 EntityWithMaterial::render(const mat4& modelViewMat) const
@@ -1006,7 +1006,7 @@ EntityWithMaterial::render(const mat4& modelViewMat) const
 // Apartado 58
 ColorMaterialEntity::ColorMaterialEntity(glm::vec3 mColor)
 {
-	mShader = Shader::get("light");
+	mShader = Shader::get("texturelight");
 	mColor = mColor;
 	mMaterial = Material(mColor);
 
@@ -1241,7 +1241,7 @@ AdvancedTIE::AdvancedTIE(){
 	mShader = Shader::get("light");
 	foco->setAmb(glm::vec4(.25, .25, .25, 1));
 	foco->setDiff(glm::vec4(.7, .7, .7, 1));
-	foco->setSpec(glm::vec4(0, 0.2, 0, 1));
+	foco->setSpec(glm::vec4(0.2, 0.2, 0.2, 1));
 	foco->setEnabled(true);
 	foco->setPosition(glm::vec4(0, 0, 0, 1));
 	foco->setDirection(glm::vec3(0, -1, 0));
@@ -1477,62 +1477,500 @@ Persona::Persona() {
 
 }
 
-void
-Persona::walk(GLint dir, GLint action) {
-	int diff = dir - currentDir;
-	vec3 initialPos = glm::vec3(mModelMat[3]);
-	move(-initialPos);
-	rotate(glm::radians(90.0f * diff), glm::vec3(0.0f, 1.0f, 0.0f));
-	move(initialPos);
+void 
+Persona::update() {
+	if (touch && touchAngle < 90) {
+		brazo1Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+		touchAngle += 10;
+	}
+	else if (touch && touchAngle >= 90 && touchAngle < 180) {
+		brazo1Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+		touchAngle += 10;
+	}
+	else if (touch) {
+		touchAngle = 0;
+		touch = false;
+	}
+}
 
-	if (action == 1 || action == 2) {
-		if (angle < 50) {
-			pierna1Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
-			pierna2Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
-			brazo1Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
-			brazo2Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
-			angle += 10;
-		}
-		else if (angle < 150) {
-			pierna1Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
-			pierna2Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
-			brazo1Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
-			brazo2Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
-			angle += 10;
-		}
-		else if (angle < 200) {
-			pierna1Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
-			pierna2Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
-			brazo1Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
-			brazo2Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
-			angle += 10;
+void
+Persona::walk(GLint dir, GLint action, std::vector<CoalitionEntity*> Objects, bool doorIsOpened) {
+	int diff = dir - currentDir;
+	currentDir = dir;
+	bool coalision = false;
+	vec3 personaPos = glm::vec3(mModelMat[3]);
+	for (CoalitionEntity* el : Objects) {
+		int support = el->support;
+		bool tempCoalision = false;
+		vec3 elPos = glm::vec3(el->entity->modelMat()[3]);
+		if (support < 80) {
+			int dis = support;
+			int halfDis = dis * 0.5;
+			if (currentDir == 1) {
+				// mira a -z
+				tempCoalision = (elPos.z < personaPos.z + halfDis && elPos.z > personaPos.z - dis
+					&& elPos.x < personaPos.x + halfDis && elPos.x > personaPos.x - halfDis);
+			}
+			else if (currentDir == 2) {
+				// mira a -x
+				tempCoalision = (elPos.x < personaPos.x + halfDis && elPos.x > personaPos.x - dis
+					&& elPos.z  < personaPos.z + halfDis && elPos.z  > personaPos.z - halfDis);
+			}
+			else if (currentDir == 3) {
+				//mira a +z
+				tempCoalision = (elPos.z > personaPos.z + halfDis && elPos.z < personaPos.z + dis
+					&& elPos.x < personaPos.x + halfDis && elPos.x  > personaPos.x - halfDis);
+			}
+			else if (currentDir == 4) {
+				//mira a +x		
+				tempCoalision = (elPos.x > personaPos.x + halfDis && elPos.x < personaPos.x + dis
+					&& elPos.z  < personaPos.z + halfDis && elPos.z  > personaPos.z - halfDis);
+			}		
 		}
 		else {
-			angle = 0;
+			if (currentDir == 1) {
+				if (!doorIsOpened) {
+					tempCoalision = (personaPos.z < -support * 0.5 + 30 &&
+						personaPos.z > -support * 0.5 - 30);
+				}
+				else {
+					// Si la puerta está abierta, no hay colisión con el centro de la puerta
+					tempCoalision = (personaPos.z < -support * 0.5 + 30 && personaPos.z > -support * 0.5 - 30 &&
+					!(personaPos.x < 30 && personaPos.x > -30));
+				}
+				
+				}
+			else if (currentDir == 2) {
+				tempCoalision = (personaPos.x < -support * 0.5 + 30);
+			}
+			else if (currentDir == 3) {
+				if (!doorIsOpened) {
+					tempCoalision = (personaPos.z > support * 0.5 - 30
+						|| (personaPos.z < -support * 0.5 + 30 && personaPos.z > -support * 0.5 - 30)
+						);
+				}
+				else {
+					// Si la puerta está abierta, no hay colisión con el centro de la puerta
+					tempCoalision = (personaPos.z > -support * 0.5 - 30 && personaPos.z < -support * 0.5 + 30 &&
+						!(personaPos.x < 30 && personaPos.x > -30));
+				}
+			}
+			else if (currentDir == 4) {
+				tempCoalision = (personaPos.x > support * 0.5 - 30);
+			}
 		}
- 	}
+		coalision = coalision || tempCoalision;
 
-
-	switch (dir) {
-	case 1: 
-		move(glm::vec3(0, 0, -1));
-		break;
-	case 2:
-		move(glm::vec3(-1, 0, 0));
-		break;
-	case 3:
-		move(glm::vec3(0, 0, 1));
-		break;
-	case 4:
-		move(glm::vec3(1, 0, 0));
-		break;
 	}
 
-	currentDir = dir;
+		vec3 initialPos = glm::vec3(mModelMat[3]);
+		move(-initialPos);
+		rotate(glm::radians(90.0f * diff), glm::vec3(0.0f, 1.0f, 0.0f));
+		move(initialPos);
+
+		if (!coalision) {
+		if (action == 2) {
+			if (angle < 50) {
+				pierna1Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+				pierna2Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+				brazo1Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+				brazo2Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+				angle += 10;
+				realAngle += 10;
+			}
+			else if (angle < 150) {
+				pierna1Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+				pierna2Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+				brazo1Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+				brazo2Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+				angle += 10;
+				realAngle -= 10;
+			}
+			else if (angle < 200) {
+				pierna1Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+				pierna2Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+				brazo1Node->rotate(glm::radians(-10.0f), glm::vec3(0, 0, 1));
+				brazo2Node->rotate(glm::radians(10.0f), glm::vec3(0, 0, 1));
+				angle += 10;
+				realAngle += 10;
+			}
+			else {
+				angle = 0;
+				realAngle = 0;
+			}
+		}
+
+		switch (dir) {
+		case 1:
+			move(glm::vec3(0, 0, -1));
+			break;
+		case 2:
+			move(glm::vec3(-1, 0, 0));
+			break;
+		case 3:
+			move(glm::vec3(0, 0, 1));
+			break;
+		case 4:
+			move(glm::vec3(1, 0, 0));
+			break;
+		}
+	}
+	if (action == 1 || action == 0) {
+		printf("2 Angle: %f, Real Angle: %f\n", angle, realAngle);
+			pierna1Node->rotate(glm::radians(-realAngle), glm::vec3(0, 0, 1));
+			pierna2Node->rotate(glm::radians(realAngle), glm::vec3(0, 0, 1));
+			brazo1Node->rotate(glm::radians(realAngle), glm::vec3(0, 0, 1));
+			brazo2Node->rotate(glm::radians(-realAngle), glm::vec3(0, 0, 1));
+			angle = 0;
+			realAngle = 0;
+		
+
+	}
+
 }
 
 WallWithDoor::WallWithDoor(GLdouble width, GLdouble height, glm::dvec4 mColor)
 {
-	mMesh = IndexMesh::generateWallWithDoor(width, height);
+	mShader = Shader::get("texturelight");
+	mMesh = IndexMesh::generateWallWithDoorTexCor(width, height);
+	mTexture = new Texture();
+	mTexture->load("../assets/images/grey_stone.jpg");
+	mColor = mColor;
+	mMaterial = Material(mColor);
 }
 
+void
+WallWithDoor::render(const glm::mat4& modelViewMat) const
+{
+	if (mMesh != nullptr) {
+		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		mMaterial.upload(*mShader);
+		mShader->setUniform("useTexture", true);
+		upload(aMat);
+		// Condicional para verificar si hay textura
+		if (mTexture != nullptr) {
+			mTexture->bind();
+		}
+		mMesh->render();
+		mShader->setUniform("useTexture", false);
+	
+		if (mTexture != nullptr) {
+			mTexture->unbind();
+		}
+
+	}
+}
+
+Orthohedron::Orthohedron(GLdouble width, GLdouble height, GLdouble depth)
+{
+	mMesh = IndexMesh::generateOrthohedron(width, height, depth);
+}
+Mesa::Mesa() {
+	glm::vec3 color = glm::vec3(1.0f, 1.0f, 0.0f);
+
+	Orthohedron* pata1 = new Orthohedron(10, 30, 10);
+	pata1->setColor(color);
+	pata1->move(glm::vec3(-20.0f, 0.0f, -20.0f));
+	addEntity(pata1);
+	Orthohedron* pata2 = new Orthohedron(10, 30, 10);
+	pata2->setColor(color);
+	pata2->move(glm::vec3(-20.0f, 0.0f, 20.0f));
+	addEntity(pata2);
+	Orthohedron* pata3 = new Orthohedron(10, 30, 10);
+	pata3->setColor(color);
+	pata3->move(glm::vec3(20.0f, 0.0f, -20.0f));
+	addEntity(pata3);
+	Orthohedron* pata4 = new Orthohedron(10, 30, 10);
+	pata4->setColor(color);
+	pata4->move(glm::vec3(20.0f, 0.0f, 20.0f));
+	addEntity(pata4);
+	Orthohedron* superficie = new Orthohedron(60, 10, 60);
+	superficie->setColor(color);
+	superficie->move(glm::vec3(0.f, 15.0f, 0.0f));
+	addEntity(superficie);
+}
+
+BaseLampara::BaseLampara(GLuint nSamples) {
+	std::vector<vec2> perfil;
+	//perfil para la base 
+	for (size_t i = 0; i < 5; i++)
+	{
+		perfil.push_back({ 20, i });
+	}
+	//perfil para la parte superior
+	for (size_t i = 0; i < 40; i++)
+	{
+		perfil.push_back({ 5, i });
+	}
+
+	mMesh = IndexMesh::generateByRevolution(perfil, nSamples);
+
+}
+
+
+
+Lampara::Lampara() {
+	mShader = Shader::get("texturelight");
+	foco->setAmb(glm::vec4(.25, .25, .25, 1));
+	foco->setDiff(glm::vec4(.7, .7, .7, 1));
+	foco->setSpec(glm::vec4(0, 0.2, 0, 1));
+	foco->setEnabled(true);
+	foco->setPosition(glm::vec4(0, 0, 0, 1));
+	foco->setDirection(glm::vec3(0, -1, 0));
+	foco->setCutoff(45, 50);
+
+	BaseLampara* baseLampara = new BaseLampara(100);
+	baseLampara->setColor(glm::dvec4(0.2, 0.2, 0.2, 1.0));
+	addEntity(baseLampara);
+
+	Cone* cuerpo = new Cone(40, 6, 3, 20, 20);
+	cuerpo->setColor(glm::dvec4(1.0, 1.0, 1.0, 1.0));
+	cuerpo->move(glm::vec3(0.0f, 40.0f, 00.0f));
+	addEntity(cuerpo);
+
+	Disk* tapa = new Disk(10, 0, 20, 360);
+	tapa->setColor(glm::dvec4(1.0, 1.0, 1.0, 1.0));
+	tapa->move(glm::vec3(0.0f, 60.0f, 0.0f));
+	addEntity(tapa);
+
+
+
+}
+
+Lampara::~Lampara() {
+	delete foco;
+	foco = nullptr;
+}
+
+void
+Lampara::render(const glm::mat4& modelViewMat) const {
+	mShader->use();
+	foco->upload(*mShader, modelViewMat * mModelMat);
+
+	for (Abs_Entity* obj : gObjects) {
+		obj->render(modelViewMat * mModelMat);
+	}
+	}
+
+
+void Lampara::changeFoco() {
+	foco->setEnabled(!foco->enabled());
+}
+
+WallWithTexCor::WallWithTexCor(GLdouble width, GLdouble height, const std::string& filename, GLint x, GLubyte alpha, glm::dvec4 mColor)
+{
+	mShader = Shader::get("texturelight");
+	mMesh = IndexMesh::generateWallTexCor(width, height, x);
+	mTexture = new Texture();
+	mTexture->load(filename, alpha);
+	mColor = mColor;
+	mMaterial = Material(mColor);
+}
+
+void 
+WallWithTexCor::render(const glm::mat4& modelViewMat) const
+{
+if (mMesh != nullptr) {
+		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		mMaterial.upload(*mShader);
+		mShader->setUniform("useTexture", true);
+		upload(aMat);
+		// Condicional para verificar si hay textura
+		if (mTexture != nullptr) {
+			mTexture->bind();
+		}
+		mMesh->render();
+		mShader->setUniform("useTexture", false);
+	
+		if (mTexture != nullptr) {
+			mTexture->unbind();
+		}
+
+	}
+}
+
+Wall::Wall(GLdouble width, GLdouble height, glm::dvec4 mColor)
+{
+	mMesh = IndexMesh::generateWall(width, height);
+
+}
+WallWithWindow::WallWithWindow(GLdouble width, GLdouble height, glm::dvec4 mColor)
+{
+	mShader = Shader::get("texturelight");
+	mMesh = IndexMesh::generateWallWithWindowTexCor(width, height);
+	mTexture = new Texture();
+	mTexture->load("../assets/images/grey_stone.jpg");
+	mColor = mColor;
+	mMaterial = Material(mColor);
+}
+
+void
+WallWithWindow::render(const glm::mat4& modelViewMat) const
+{
+	if (mMesh != nullptr) {
+		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		mMaterial.upload(*mShader);
+		mShader->setUniform("useTexture", true);
+		upload(aMat);
+		// Condicional para verificar si hay textura
+		if (mTexture != nullptr) {
+			mTexture->bind();
+		}
+		mMesh->render();
+		mShader->setUniform("useTexture", false);
+
+		if (mTexture != nullptr) {
+			mTexture->unbind();
+		}
+
+	}
+}
+
+Window::Window(GLdouble width, GLdouble height, GLubyte alpha, glm::dvec4 mColor)
+{
+	mShader = Shader::get("texturelight");
+	mMesh = IndexMesh::generateWallTexCor(width, height, 1);
+	mTexture = new Texture();
+	mTexture->load("../assets/images/windowV.jpg", alpha);
+	mColor = mColor;
+	mMaterial = Material(mColor);
+
+	luzNatural->setAmb(glm::vec4(.25, .25, .25, 1));
+	luzNatural->setDiff(glm::vec4(.7, .7, .7, 1));
+	luzNatural->setSpec(glm::vec4(0.2, 0.2, 0.2, 1));
+	luzNatural->setEnabled(true);
+	luzNatural->setPosition(glm::vec4(0, 0, 100, 1));
+	luzNatural->setDirection(glm::vec3(0, 0, -1));
+	luzNatural->setCutoff(45, 50);
+
+}
+
+void
+Window::render(const glm::mat4& modelViewMat) const
+{
+	if (mMesh != nullptr) {
+		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		mMaterial.upload(*mShader);
+		luzNatural->upload(*mShader, modelViewMat * mModelMat);
+		mShader->setUniform("useTexture", true);
+		upload(aMat);
+
+		glDepthMask(GL_FALSE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		mShader->setUniform("modulate", mModulate);
+		if (mTexture != nullptr) {
+
+			mTexture->bind();
+		}
+		mMesh->render();
+		if (mTexture != nullptr) {
+			mTexture->unbind();
+		}
+
+		mShader->setUniform("useTexture", false);
+
+
+		if (mShowNormals) {
+			Shader* mNormalShader = Shader::get("normals");
+			mNormalShader->use();
+			mNormalShader->setUniform("modelView", aMat);
+
+
+			mMesh->render();
+		}
+
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
+
+	}
+}
+
+
+Door::Door()
+{
+	WallWithTexCor* door = new WallWithTexCor(61.0, 101.0, "../assets/images/wood_door.png");
+
+	door->move(glm::vec3(-30.0f, 0.0f, 0.0f));
+	addEntity(door);
+
+	Orthohedron* doorFrame = new Orthohedron(5, 101.0, 5);
+	doorFrame->setColor(glm::dvec4(0.5, 0.5, 0.5, 1.0));
+	addEntity(doorFrame);
+}
+
+
+
+void
+Door::update() {
+	glm::vec3 initialPos = glm::vec3(mModelMat[3]);
+	move(-initialPos);
+
+	if (doorOpen) {
+		if (doorAngle < 90) {
+			doorAngle += 5;
+			rotate(glm::radians(-5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		}
+	}
+	else {
+		if (doorAngle > 0) {
+			doorAngle -= 5;
+			rotate(glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		}
+	}
+	move(initialPos);
+
+}
+
+Sky::Sky(GLdouble radius, glm::dvec4 mColor)
+{
+	GLuint nParallels = 180;
+	GLuint nMeridians = 360;
+	mShader = Shader::get("texture:texture_alpha");
+	std::vector<vec2> profile;
+	GLdouble t0 = 180.0 / nParallels;
+	GLdouble ti = -90;
+	for (GLint i = 0; i <= nParallels; i++)
+	{
+		profile.push_back({ radius * cos(radians(ti)), radius * sin(radians(ti)) });
+		ti += t0;
+	}
+
+	mMesh = IndexMesh::generateByRevolutionTexCor(profile, nMeridians);
+	mTexture = new Texture();
+	mTexture->load("../assets/images/sky.jpg");
+}
+
+Habitacion::Habitacion(GLdouble w, GLdouble h) {
+	WallWithDoor* wallWithDoor = new WallWithDoor(w, h);
+	wallWithDoor->move(glm::vec3(0, h*0.5, -w*0.5));
+	addEntity(wallWithDoor);
+
+	WallWithTexCor* wall = new WallWithTexCor(w, h, "../assets/images/grey_stone.jpg", 2);
+	wall->move(glm::vec3(0, h*0.5, w*0.5));
+	addEntity(wall);
+	WallWithTexCor* wall2 = new WallWithTexCor(w, h, "../assets/images/grey_stone.jpg", 2);
+	wall2->rotate(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	wall2->move(glm::vec3(-w*0.5, h*0.5, 0));
+	addEntity(wall2);
+
+	WallWithTexCor* floor = new WallWithTexCor(w, w, "../assets/images/wood_floor.jpg", 2);
+	floor->rotate(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	floor->move(glm::vec3(0, 0.0, 0));
+	addEntity(floor);
+
+	WallWithWindow* wallWithWindow = new WallWithWindow(400.0, 160.0);
+	wallWithWindow->rotate(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	wallWithWindow->move(glm::vec3(200, 80.0, 0));
+	addEntity(wallWithWindow);
+
+	Window* window = new Window(w*0.4, h*0.4);
+	window->rotate(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	window->move(glm::vec3(w*0.5, h*0.5, 0));
+	addEntity(window);
+}

@@ -100,6 +100,11 @@ Shader::setUniform(const string& name, float value)
 {
 	glUniform1f(glGetUniformLocation(mProgram, name.c_str()), value);
 }
+void
+Shader::setUniform(const string& name, int value)
+{
+	glUniform1f(glGetUniformLocation(mProgram, name.c_str()), value);
+}
 
 void
 Shader::setUniform(const string& name, const glm::vec3& value)

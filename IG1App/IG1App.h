@@ -31,7 +31,7 @@ public:
 	// Constant Frame duration in seconds
 	double FRAME_DURATION = 0.04;
 	// Bool to enable update
-	bool mUpdateEnabled = false;
+	bool mUpdateEnabled = true;
 	// Next update double
 	double mNextUpdate = 0;
 

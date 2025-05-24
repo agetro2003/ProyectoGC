@@ -24,7 +24,6 @@ void
 Scene0::init()
 {
 	Scene::init();
-
 	// allocate memory and load resources
 	// Lights
 	// Textures
@@ -72,50 +71,156 @@ Scene0::init()
 void
 Scene1::init()
 {
-	Scene::init();	gObjects.push_back(new RGBAxes(400.0));
+	//setGL(); // OpenGL settings
+
+	
+	gObjects.push_back(new RGBAxes(400.0));
 	//Triangulo cian
 	//gObjects.push_back(new RegularPolygon(3, 200.0, glm::dvec4(0.0, 1.0, 1.0, 1.0)));
 	//Circunferencia magenta
 //	gObjects.push_back(new RegularPolygon(360, 200.0, glm::dvec4(1.0, 0.0, 1.0, 1.0)));
-	WallWithDoor* wallWithDoor = new WallWithDoor(400.0, 160.0);
-	wallWithDoor->move(glm::vec3(0, 80.0, -200));
-	wallWithDoor->setColor(glm::dvec4(0.0, 0.0, 1.0, 1.0));
-	gObjects.push_back(wallWithDoor);
+	
+
+
+	WallWithTexCor* terrain = new WallWithTexCor(2000.0, 2000.0, "../assets/images/terrain.jpg", 2);
+	terrain->rotate(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	terrain->move(glm::vec3(0, -1.0, 0));
+	gObjects.push_back(terrain);
+
+
+
+	
+
+	Mesa* mesa = new Mesa();
+	mesa->move(glm::vec3(100, 15, 100));
+	gObjects.push_back(mesa);
+
+
+	lampara->move(glm::vec3(100, 35, 100));
+	gObjects.push_back(lampara);
+
 	gObjects.push_back(persona);
 	persona->scale(glm::vec3(0.2, 0.2, 0.2));
-	persona->move(glm::vec3(0, 30, 0));
-	Ground2* ground = new Ground2(400.0, 400.0, 4, 4);
-	ground->rotate();
-	gObjects.push_back(ground);
+	persona->move(glm::vec3(0, 34, 0));
 
+
+	
+	door->move(glm::vec3(30, 51.0, -200));
+	gObjects.push_back(door);
+
+
+
+	Sky* sky = new Sky(2000.0);
+
+	gObjects.push_back(sky);
+
+	Habitacion* habitacion = new Habitacion(400.0, 160);
+	habitacion->move(glm::vec3(0, 1, 0));
+	gObjects.push_back(habitacion);
+
+	gCoObjects.push_back(new CoalitionEntity({ mesa, 60 }));
+	gCoObjects.push_back(new CoalitionEntity({ habitacion, 400 }));
+
+}
+
+bool 
+Scene1::getCoalitionWithPersona(Abs_Entity* el, int dis, bool isDoor) {
+	vec3 elPos = glm::vec3(el->modelMat()[3]);
+	vec3 personaPos = glm::vec3(persona->modelMat()[3]);
+	int halfDis = dis * 0.5;
+	int support = 0;
+	if (isDoor) {
+		support = -30;
+	}
+	printf("currentDir: %d\n", persona->currentDir);
+	if (persona->currentDir == 1) {
+		// mira a -z
+		return (elPos.z < personaPos.z && elPos.z > personaPos.z - dis
+			&& elPos.x + support < personaPos.x + halfDis && elPos.x + support > personaPos.x - halfDis
+			);
+	}
+	else if (persona->currentDir == 2) {
+		// mira a -x
+		if (isDoor) {
+			return false;
+		}
+		return (elPos.x < personaPos.x && elPos.x > personaPos.x - dis
+			&& elPos.z < personaPos.z + halfDis && elPos.z > personaPos.z - halfDis
+			);
+	}
+	else if (persona->currentDir == 3) {
+		if (isDoor) {
+			return false;
+		}
+		//mira a +z
+		return (elPos.z > personaPos.z && elPos.z < personaPos.z + dis
+			&& elPos.x < personaPos.x + halfDis && elPos.x > personaPos.x - halfDis
+			);
+	}
+	else if (persona->currentDir == 4) {
+	
+		if (isDoor) {
+			return false;
+		}
+		//mira a +x		
+		return (elPos.x > personaPos.x && elPos.x < personaPos.x + dis
+			&& elPos.z < personaPos.z + halfDis && elPos.z > personaPos.z - halfDis
+			);
+	}
+	return false;
 }
 
 
 bool
-Scene1::handleSpecialKey(int key, int scancode, int action, int mods) {
-
+Scene1::handleKey(unsigned int key) {
 	switch (key) {
-	case 87:
-		persona->walk(1, action);
+	case 'e':
+		persona->setTouch(true);
+		if (getCoalitionWithPersona(lampara, 80)) {
+			lampara->changeFoco();
+			return true;
+		}
+		else if (getCoalitionWithPersona(door, 50, true)) {
+			door->setDoorOpen(!door->doorOpen);
+			return true;
+		}
 		return true;
-		break;
-	case 65:
-		persona->walk(2, action);
-		return true;
-		break;
-	case 83:
-		persona->walk(3, action);
-
-		return true;
-		break;
-	case 68:
-		persona->walk(4, action);
-
-		return true;
-		break;
 	default:
 		return false;
 		break;
+	}
+}
+
+bool
+Scene1::handleSpecialKey(int key, int scancode, int action, int mods) {
+	
+	if (!persona->touch) {
+		switch (key) {
+		case 87: // tecla W
+			persona->walk(1, action, gCoObjects, door->doorOpen);
+			return true;
+			break;
+		case 65: // tecla A
+			persona->walk(2, action, gCoObjects, door->doorOpen);
+			return true;
+			break;
+		case 83: // tecla S
+			persona->walk(3, action, gCoObjects, door->doorOpen);
+
+			return true;
+			break;
+		case 68: // tecla D
+			persona->walk(4, action, gCoObjects, door->doorOpen);
+
+			return true;
+			break;
+		default:
+			return false;
+			break;
+		}
+	}
+	else {
+		return false;
 	}
 }
 

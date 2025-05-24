@@ -36,7 +36,7 @@ public:
 
 	DirLight *dirLight = new DirLight(); 
 	bool lightON = true;
-	Shader *shader = Shader::get("light");
+	Shader *shader = Shader::get("texturelight");
 
 	//void setNormals();
 
@@ -70,7 +70,17 @@ public:
 	Scene1() = default;
 	~Scene1() = default;
 	Persona* persona = new Persona();
+	Lampara* lampara = new Lampara();
+	Door* door = new Door();
+
+	bool handleKey(unsigned int key) override;
 	bool handleSpecialKey(int key, int scancode, int action, int mods) override;
+
+
+	std::vector<CoalitionEntity*> gCoObjects;
+
+
+	bool getCoalitionWithPersona(Abs_Entity* el, int dis, bool IsDoor = false );
 
 	void init() override;
 };

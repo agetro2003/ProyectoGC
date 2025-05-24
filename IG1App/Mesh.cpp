@@ -702,6 +702,22 @@ IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile, GLuint nS
 
 }
 
+
+IndexMesh*
+IndexMesh::generateByRevolutionTexCor(const std::vector<glm::vec2>& profile, GLuint nSamples, GLfloat angleMax) {
+	IndexMesh* mesh = IndexMesh::generateByRevolution(profile, nSamples, angleMax);
+	mesh->vTexCoords.reserve(mesh->mNumVertices);
+	int tamPerfil = profile.size();
+	for (int i = 0; i <= nSamples; ++i) { // muestra i-ésima
+		GLdouble u = static_cast<GLdouble>(i) / nSamples;
+		for (int j = 0; j < tamPerfil; ++j) { // perfil j-ésimo
+			GLdouble v = static_cast<GLdouble>(j) / (tamPerfil - 1);
+			mesh->vTexCoords.emplace_back(u, v);
+		}
+	}
+	return mesh;
+}
+
 IndexMesh*
 IndexMesh::generateIndexedBox(GLdouble l) {
 	IndexMesh* mesh = new IndexMesh();
@@ -847,8 +863,8 @@ IndexMesh::generateWallWithDoor(GLdouble width, GLdouble height) {
 	2, 1, 3,
 	3, 4, 5,
 	3, 5, 6,
-	6, 7, 8,
-	6, 8, 9,
+	7, 6, 8,
+	8, 6, 9,
 	};
 
 	mesh->vIndexes = indices;
@@ -873,5 +889,205 @@ IndexMesh::generateWallWithDoor(GLdouble width, GLdouble height) {
 	mesh->mNumVertices = mesh->vVertices.size();
 
 	return mesh;
+}
 
+IndexMesh*
+IndexMesh::generateWallWithDoorTexCor(GLdouble width, GLdouble height) {
+	IndexMesh* mesh = generateWallWithDoor(width, height);
+	int doorWidth = 60;
+	int doorHeight = 100;
+	float doorWidthF = (float)doorWidth / width;
+	float doorHeightF = (float)doorHeight / height;
+
+	mesh->vTexCoords.reserve(mesh->mNumVertices);
+	std::vector<vec2> vertices = {
+		{0, 0}, //0
+		{1 - doorWidthF, 0}, //1
+		{0, 1}, //2
+		{1 - doorWidthF, 1}, //3
+		{1 - doorWidthF, doorHeightF}, //4
+		{1 + doorWidthF, doorHeightF}, //5
+		{1 + doorWidthF, 1}, //6
+		{2, 1}, //7
+		{2, 0}, //8
+		{1 + doorWidthF, 0}, //9
+	};
+	mesh->vTexCoords = vertices;
+	return mesh;
+
+}
+
+IndexMesh*
+IndexMesh::generateWallWithWindow(GLdouble width, GLdouble height) {
+	IndexMesh* mesh = new IndexMesh();
+	mesh->mPrimitive = GL_TRIANGLES;
+	GLdouble windowHeight = height * 0.4;
+	GLdouble windowWidth = width * 0.4;
+	GLdouble my = height * 0.5;
+	GLdouble mw = width * 0.5;
+	GLdouble mWW = windowWidth * 0.5;
+	GLdouble mWH = windowHeight * 0.5;
+
+
+	// indices que definen la pared
+	std::vector<GLuint> indices = {
+	0, 1, 2,
+	2, 1, 3,
+	3, 4, 5,
+	3, 5, 6,
+	7, 6, 8,
+	8, 6, 9,
+	9, 10, 11,
+	9, 10, 1,
+	};
+
+	mesh->vIndexes = indices;
+
+	// vertices de la pared
+	std::vector<vec3> vertices = {
+	{-mw, -my, 0}, //0
+	{-mWW, -my, 0}, //1
+	{-mw, my, 0}, //2
+	{ -mWW, my, 0 }, //3
+	{-mWW, mWH, 0}, //4
+	{mWW, mWH, 0}, //5
+	{mWW, my, 0}, //6
+	{mw, my, 0}, //7
+	{mw, -my, 0}, //8
+	{mWW, -my, 0}, //9
+	{-mWW, -mWH, 0 }, //10
+	{mWW, -mWH, 0 }, // 11
+	};
+	mesh->vVertices = vertices;
+	// calculo de las normales
+	mesh->buildNormalVectors();
+	mesh->mNumVertices = mesh->vVertices.size();
+
+	return mesh;
+}
+
+IndexMesh* 
+IndexMesh::generateWallWithWindowTexCor(GLdouble width, GLdouble height) {
+	IndexMesh* mesh = generateWallWithWindow(width, height);
+	GLdouble windowHeight = height * 0.4;
+	GLdouble windowWidth = width * 0.4;
+	float windowWidthF = (float)windowWidth / width;
+	float windowHeightF = (float)windowHeight *0.5/ height;
+	mesh->vTexCoords.reserve(mesh->mNumVertices);
+	/*
+	{-mw, -my, 0}, //0
+	{-mWW, -my, 0}, //1
+	{-mw, my, 0}, //2
+	{ -mWW, my, 0 }, //3
+	{-mWW, mWH, 0}, //4
+	{mWW, mWH, 0}, //5
+	{mWW, my, 0}, //6
+	{mw, my, 0}, //7
+	{mw, -my, 0}, //8
+	{mWW, -my, 0}, //9
+	{-mWW, -mWH, 0 }, //10
+	{mWW, -mWH, 0 }, // 11
+	*/
+	std::vector<vec2> vertices = {
+		{0, 0}, //0
+		{1 - windowWidthF, 0}, //1
+		{0, 1}, //2
+		{1 - windowWidthF, 1}, //3
+		{1 - windowWidthF, 0.5 + windowHeightF}, //4
+		{1 + windowWidthF, 0.5 + windowHeightF}, //5
+		{1 + windowWidthF, 1}, //6
+		{2, 1}, //7
+		{2, 0}, //8
+		{1 + windowWidthF, 0}, //9
+		{1 - windowWidthF, 0.5 - windowHeightF}, //10
+		{1 + windowWidthF, 0.5 - windowHeightF} //11
+	};
+	mesh->vTexCoords = vertices;
+	return mesh;
+}
+
+IndexMesh* 
+IndexMesh::generateWall(GLdouble width, GLdouble height) {
+	IndexMesh* mesh = new IndexMesh();
+	mesh->mPrimitive = GL_TRIANGLES;
+	GLdouble my = height * 0.5;
+	GLdouble mw = width * 0.5;
+	// indices que definen la pared
+	std::vector<GLuint> indices = {
+		0, 1, 2,
+		2, 1, 3,
+	};
+	mesh->vIndexes = indices;
+	// vertices de la pared
+	std::vector<vec3> vertices = {
+	{-mw, -my, 0}, //0
+	{mw, -my, 0}, //1
+	{-mw, my, 0}, //2
+	{mw, my, 0} //3
+	};
+	mesh->vVertices = vertices;
+	// calculo de las normales
+	mesh->buildNormalVectors();
+	mesh->mNumVertices = mesh->vVertices.size();
+	return mesh;
+}
+
+IndexMesh* 
+IndexMesh::generateWallTexCor(GLdouble width, GLdouble height, GLint x) {
+	IndexMesh* mesh = generateWall(width, height);
+	mesh->vTexCoords.reserve(mesh->mNumVertices);
+
+	std::vector<vec2> vertices = {
+	{0, 1}, //0
+	{x, 1}, //1
+	{0, 0}, //2
+	{x, 0} //3
+	};
+	mesh->vTexCoords = vertices;
+
+	return mesh;
+}
+
+
+
+IndexMesh*
+IndexMesh::generateOrthohedron(GLdouble length, GLdouble width, GLdouble height) {
+	IndexMesh* mesh = new IndexMesh();
+	mesh->mPrimitive = GL_TRIANGLES;
+	GLdouble halfLength = length * 0.5;
+	GLdouble halfWidth = width * 0.5;
+	GLdouble halfHeight = height * 0.5;
+	// indices que definen la caja
+	std::vector<GLuint> indices = {
+		0, 1, 2,
+		2, 1, 3,
+		2, 3, 6,
+		6, 3, 7,
+		6, 7, 4,
+		4, 7, 5,
+		4, 5, 1,
+		1, 4, 0,
+		0, 2, 4,
+		4, 2, 6,
+		1, 5, 3,
+		3, 5, 7,
+	};
+	mesh->vIndexes = indices;
+	// vertices de la caja
+	std::vector<vec3> vertices = {
+	{-halfLength, -halfWidth, -halfHeight}, //0
+	{halfLength, -halfWidth, -halfHeight}, //1 
+	{-halfLength, halfWidth, -halfHeight}, //2
+	{halfLength, halfWidth, -halfHeight}, //3
+	{-halfLength, -halfWidth, halfHeight}, //4
+	{halfLength, -halfWidth, halfHeight}, //5
+	{-halfLength, halfWidth, halfHeight}, //6
+	{halfLength, halfWidth, halfHeight} //7
+	};
+	mesh->vVertices = vertices;
+	// calculo de las normales
+	mesh->buildNormalVectors();
+	mesh->mNumVertices = mesh->vVertices.size();
+	
+	return mesh;
 }

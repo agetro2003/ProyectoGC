@@ -35,6 +35,7 @@ public:
 	//update the model matrix
 	virtual void update() {};
 	
+	
 	//int orbit_flag = 0;
 
 protected:
@@ -385,26 +386,116 @@ public:
 	Granjero();
 };
 
+struct CoalitionEntity {
+	Abs_Entity* entity;
+	int support;
+};
 
 class Persona : public CompoundEntity
 {
 public: 
 	Persona();
-	void walk(GLint dir, GLint action);
+	void update() override;
+	void walk(GLint dir, GLint action, std::vector<CoalitionEntity*> Objects, bool doorIsOpened);
 	int currentDir = 4 ;
-
+	bool touch = false;
+	void setTouch(bool t) { touch = t; }
 	CompoundEntity* brazo1Node = new CompoundEntity();
 	CompoundEntity* brazo2Node = new CompoundEntity();
 	CompoundEntity* pierna1Node = new CompoundEntity();
 	CompoundEntity* pierna2Node = new CompoundEntity();
-
-	int angle = 0;
+	float realAngle = 0;
+	float angle = 0;
+	float touchAngle = 0;
 	
 };
 class WallWithDoor : public ColorMaterialEntity
 {
 public:
-	WallWithDoor(GLdouble width, GLdouble height, glm::dvec4 mColor = glm::dvec4(0.0, 0.0, 0.0, 1.0));
+	WallWithDoor(GLdouble width, GLdouble height, glm::dvec4 mColor = glm::dvec4(1.0, 1.0, 1.0, 1.0));
+	void render(const glm::mat4& modelViewMat) const override;
+};
+
+class Orthohedron : public ColorMaterialEntity
+{
+public:
+	Orthohedron(GLdouble width, GLdouble height, GLdouble depth);
+//	void render(const glm::mat4& modelViewMat) const override;
+};
+
+class Mesa : public CompoundEntity
+{
+public:
+	Mesa();
+};
+
+
+class BaseLampara : public ColorMaterialEntity
+{
+public:
+	BaseLampara(GLuint nSamples);
+	//void render(const glm::mat4& modelViewMat) const override;
+};
+
+
+
+class Lampara : public CompoundEntity
+{
+public:
+	Lampara();
+	~Lampara();
+	void render(const glm::mat4& modelViewMat) const override;
+	SpotLight* foco = new SpotLight({ 0, 0, 0 }, 1);
+	void changeFoco();
+};
+
+class WallWithTexCor : public ColorMaterialEntity
+{
+public:
+	WallWithTexCor(GLdouble width, GLdouble height, const std::string& filename, GLint x = 1, GLubyte alpha = 255, glm::dvec4 mColor = glm::dvec4(1.0, 1.0, 1.0, 1.0));
+	void render(const glm::mat4& modelViewMat) const override;
+};
+
+class Wall : public ColorMaterialEntity
+{
+public:
+	Wall(GLdouble width, GLdouble height, glm::dvec4 mColor = glm::dvec4(0.0, 0.0, 0.0, 1.0));
+//	void render(const glm::mat4& modelViewMat) const override;
+};
+
+class WallWithWindow : public ColorMaterialEntity
+{
+public:
+	WallWithWindow(GLdouble width, GLdouble height, glm::dvec4 mColor = glm::dvec4(1.0, 1.0, 1.0, 1.0));
+	void render(const glm::mat4& modelViewMat) const override;
+};
+
+class Window : public ColorMaterialEntity
+{
+	public:
+	Window(GLdouble width, GLdouble height, GLubyte alpha = 100, glm::dvec4 mColor = glm::dvec4(1.0, 1.0, 1.0, 1.0));
+	void render(const glm::mat4& modelViewMat) const override;
+	SpotLight* luzNatural = new SpotLight({ 0, 0, 0 }, 2);
+};
+class Door : public CompoundEntity
+{
+public:
+	Door();
+	void update() override;
+	bool doorOpen = false;
+	void setDoorOpen(bool open) { doorOpen = open; }
+	int doorAngle = 0;
+};
+
+class Sky : public EntityWithTexture {
+public:
+	Sky(GLdouble radius, glm::dvec4 mColor = glm::dvec4(0.0, 0.0, 1.0, 1.0));
+};
+
+class Habitacion : public CompoundEntity
+{
+public:
+	Habitacion(GLdouble w, GLdouble h);
 };
 
 
