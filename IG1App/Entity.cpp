@@ -1848,6 +1848,11 @@ Window::Window(GLdouble width, GLdouble height, GLubyte alpha, glm::dvec4 mColor
 
 }
 
+Window::~Window() {
+	delete luzNatural;
+	luzNatural = nullptr;
+}
+
 void
 Window::render(const glm::mat4& modelViewMat) const
 {

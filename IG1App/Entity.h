@@ -474,8 +474,10 @@ class Window : public ColorMaterialEntity
 {
 	public:
 	Window(GLdouble width, GLdouble height, GLubyte alpha = 100, glm::dvec4 mColor = glm::dvec4(1.0, 1.0, 1.0, 1.0));
+	~Window();
 	void render(const glm::mat4& modelViewMat) const override;
 	SpotLight* luzNatural = new SpotLight({ 0, 0, 0 }, 2);
+	
 };
 class Door : public CompoundEntity
 {

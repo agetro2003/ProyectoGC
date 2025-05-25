@@ -71,7 +71,8 @@ Scene0::init()
 void
 Scene1::init()
 {
-	//setGL(); // OpenGL settings
+	Scene::init();
+	dirLight->setEnabled(false);
 
 	
 	gObjects.push_back(new RGBAxes(400.0));
@@ -464,15 +465,7 @@ void
 Scene::destroy()
 { // release memory and resources
 
-	for (Abs_Entity* el : gObjects) {	/*
-		auto* objWithTexture = dynamic_cast<EntityWithTexture*>(el);
-		if (objWithTexture) {
-			delete objWithTexture->mTexture;
-			auto* objWithInsideTexture = dynamic_cast<BoxOutline*>(el);
-			if (objWithInsideTexture) {
-				delete objWithInsideTexture->mInsideTexture;
-			}
-		}*/
+	for (Abs_Entity* el : gObjects) {	
 		delete el;
 	}
 
@@ -487,6 +480,12 @@ Scene::destroy()
 		delete el;
 
 	gTextures.clear();
+}
+
+Scene1::~Scene1(){
+	for (CoalitionEntity* el : gCoObjects) {
+		delete el;
+	}
 }
 
 void

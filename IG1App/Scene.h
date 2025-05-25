@@ -42,7 +42,7 @@ public:
 
 
 protected:
-	void destroy();
+	virtual void destroy();
 	void setGL();
 	void resetGL();
 
@@ -68,7 +68,7 @@ public:
 class Scene1 : public Scene {
 public:
 	Scene1() = default;
-	~Scene1() = default;
+	~Scene1();
 	Persona* persona = new Persona();
 	Lampara* lampara = new Lampara();
 	Door* door = new Door();
