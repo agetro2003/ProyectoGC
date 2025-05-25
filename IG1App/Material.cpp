@@ -42,3 +42,12 @@ Material::setGold()
 	specular = { 0.628281, 0.555802, 0.366065 };
 	expF = 51.2;
 }
+
+void
+Material::setWood()
+{
+	ambient = { 0.2, 0.1, 0.05 };         // Marrón oscuro suave para la luz ambiental
+	diffuse = { 0.6, 0.3, 0.1 };          // Marrón cálido (color principal)
+	specular = { 0.2, 0.15, 0.1 };        // Brillo bajo, pero presente (barniz)
+	expF = 15.0;                          // Un poco de brillo, pero no tan reflectante como el metal
+}

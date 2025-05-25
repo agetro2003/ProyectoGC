@@ -1503,7 +1503,7 @@ Persona::walk(GLint dir, GLint action, std::vector<CoalitionEntity*> Objects, bo
 		int support = el->support;
 		bool tempCoalision = false;
 		vec3 elPos = glm::vec3(el->entity->modelMat()[3]);
-		if (support < 80) {
+		if (support < 200) {
 			int dis = support;
 			int halfDis = dis * 0.5;
 			if (currentDir == 1) {
@@ -1602,16 +1602,16 @@ Persona::walk(GLint dir, GLint action, std::vector<CoalitionEntity*> Objects, bo
 
 		switch (dir) {
 		case 1:
-			move(glm::vec3(0, 0, -1));
+			move(glm::vec3(0, 0, -3));
 			break;
 		case 2:
-			move(glm::vec3(-1, 0, 0));
+			move(glm::vec3(-3, 0, 0));
 			break;
 		case 3:
-			move(glm::vec3(0, 0, 1));
+			move(glm::vec3(0, 0, 3));
 			break;
 		case 4:
-			move(glm::vec3(1, 0, 0));
+			move(glm::vec3(3, 0, 0));
 			break;
 		}
 	}
@@ -1973,4 +1973,77 @@ Habitacion::Habitacion(GLdouble w, GLdouble h) {
 	window->rotate(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	window->move(glm::vec3(w*0.5, h*0.5, 0));
 	addEntity(window);
+}
+
+Forniture::Forniture() {
+	std::vector<vec2> perfil;
+	GLuint nSamples = 180;
+	//perfil para la base 
+	for (size_t i = 0; i < 6; i++)
+	{
+		perfil.push_back({ 20, i });
+	}
+	//perfil para la parte media
+	for (size_t i = 6; i < 46; i++)
+	{
+		perfil.push_back({ 10, i });
+	}
+	//perfil para la parte superior
+	for (size_t i = 40; i < 48; i++)
+	{
+		perfil.push_back({ 60, i });
+	}
+	// perfil para la tapa
+	for (size_t i = 10; i >= 0; i--)
+	{
+		perfil.push_back({ i, 48 });
+	}
+
+
+	mMaterial = Material();
+	mMaterial.setWood();
+
+	mMesh = IndexMesh::generateByRevolution(perfil, nSamples);
+}
+
+FarolaBase::FarolaBase() {
+	std::vector<vec2> perfil;
+	GLuint nSamples = 180;
+	//perfil para la base 
+	for (size_t i = 0; i < 10; i++)
+	{
+		perfil.push_back({ 20, i });
+	}
+	//perfil para la parte media
+	for (size_t i = 10; i < 60; i++)
+	{
+		perfil.push_back({ 5, i });
+	}
+	setColor(glm::dvec4(0.01, 0.01, 0.2, 1.0));
+	mMesh = IndexMesh::generateByRevolution(perfil, nSamples);
+}
+
+Farola::Farola() {
+	FarolaBase* base = new FarolaBase();
+	addEntity(base);
+
+	Sphere* bombilla = new Sphere(20, 60, 60);
+	bombilla->setColor(glm::dvec4(1.0, 1.0, 1.0, 1.0));
+	bombilla->move(glm::vec3(0.0f, 60.0f, 0.0f));
+	addEntity(bombilla);
+
+	SpotLight* focoFarola = new SpotLight();
+	focoFarola->setAmb(glm::vec4(.25, .25, .25, 1));
+	focoFarola->setDiff(glm::vec4(.7, .7, .7, 1));
+	focoFarola->setSpec(glm::vec4(0.2, 0.2, 0.2, 1));
+	focoFarola->setEnabled(true);
+	focoFarola->setPosition(glm::vec4(0, 60, 0, 1));
+	focoFarola->setDirection(glm::vec3(0, -1, 0));
+	focoFarola->setCutoff(45, 90);
+	
+	Cone* tapa = new Cone(20, 6, 3, 20, 20);
+	tapa->setColor(glm::dvec4(0.01, 0.01, 0.2, 1.0));
+	tapa->move(glm::vec3(0.0f, 80.0f, 0.0f));
+	addEntity(tapa);
+
 }

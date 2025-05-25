@@ -88,7 +88,13 @@ Scene1::init()
 	gObjects.push_back(terrain);
 
 
+	Farola* farola = new Farola();
+	farola->move(glm::vec3(100, 0, 300));
+	gObjects.push_back(farola);
 
+	Farola* farola2 = new Farola();
+	farola2->move(glm::vec3(-100, 0, 300));
+	gObjects.push_back(farola2);
 	
 
 	Mesa* mesa = new Mesa();
@@ -108,9 +114,12 @@ Scene1::init()
 	door->move(glm::vec3(30, 51.0, -200));
 	gObjects.push_back(door);
 
-
+	Forniture* forniture = new Forniture();
+	forniture->move(glm::vec3(-100, 10, 100));
+	gObjects.push_back(forniture);
 
 	Sky* sky = new Sky(2000.0);
+
 
 	gObjects.push_back(sky);
 
@@ -119,6 +128,7 @@ Scene1::init()
 	gObjects.push_back(habitacion);
 
 	gCoObjects.push_back(new CoalitionEntity({ mesa, 60 }));
+	gCoObjects.push_back(new CoalitionEntity({ forniture, 80 }));
 	gCoObjects.push_back(new CoalitionEntity({ habitacion, 400 }));
 
 }

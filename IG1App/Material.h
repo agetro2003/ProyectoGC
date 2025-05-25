@@ -20,7 +20,7 @@ public:
 
 	void setCopper();
 	void setGold();
-
+	void setWood();
 protected:
 	// Coeficientes de reflexión
 	glm::vec3 ambient = {0.2, 0.2, 0.2};

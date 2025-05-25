@@ -499,4 +499,18 @@ public:
 };
 
 
+class Forniture : public ColorMaterialEntity {
+public: 
+	Forniture();
+};
+
+class Farola : public CompoundEntity {
+public:
+	Farola();
+};
+
+class FarolaBase : public ColorMaterialEntity {
+public:
+	FarolaBase();
+};
 #endif //_H_Entities_H_
