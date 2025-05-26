@@ -269,6 +269,7 @@ class EntityWithMaterial : public Abs_Entity
 public:
 	EntityWithMaterial();
 	void setMaterial(const Material& m) { mMaterial = m; };
+	Material getMaterial() const { return mMaterial; };
 	void render(const glm::mat4& modelViewMat) const override;
 
 protected:
@@ -500,5 +501,28 @@ public:
 	Habitacion(GLdouble w, GLdouble h);
 };
 
+class Forniture : public ColorMaterialEntity {
+public:
+	Forniture();
+};
+
+class Farola : public CompoundEntity {
+public:
+	Farola();
+	~Farola();
+	SpotLight* foco = new SpotLight({ 0, 0, 0 }, 3);
+
+	void render(const glm::mat4& modelViewMat) const override;
+};
+
+class FarolaBase : public ColorMaterialEntity {
+public:
+	FarolaBase();
+};
+
+class Silla : public CompoundEntity {
+public:
+	Silla();
+};
 
 #endif //_H_Entities_H_

@@ -20,6 +20,8 @@ public:
 
 	void setCopper();
 	void setGold();
+	void setWood();
+
 
 protected:
 	// Coeficientes de reflexión

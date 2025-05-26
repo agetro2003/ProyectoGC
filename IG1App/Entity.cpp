@@ -1503,7 +1503,7 @@ Persona::walk(GLint dir, GLint action, std::vector<CoalitionEntity*> Objects, bo
 		int support = el->support;
 		bool tempCoalision = false;
 		vec3 elPos = glm::vec3(el->entity->modelMat()[3]);
-		if (support < 80) {
+		if (support < 200) {
 			int dis = support;
 			int halfDis = dis * 0.5;
 			if (currentDir == 1) {
@@ -1602,16 +1602,16 @@ Persona::walk(GLint dir, GLint action, std::vector<CoalitionEntity*> Objects, bo
 
 		switch (dir) {
 		case 1:
-			move(glm::vec3(0, 0, -1));
+			move(glm::vec3(0, 0, -3));
 			break;
 		case 2:
-			move(glm::vec3(-1, 0, 0));
+			move(glm::vec3(-3, 0, 0));
 			break;
 		case 3:
-			move(glm::vec3(0, 0, 1));
+			move(glm::vec3(0, 0, 3));
 			break;
 		case 4:
-			move(glm::vec3(1, 0, 0));
+			move(glm::vec3(3, 0, 0));
 			break;
 		}
 	}
@@ -1667,28 +1667,56 @@ Orthohedron::Orthohedron(GLdouble width, GLdouble height, GLdouble depth)
 	mMesh = IndexMesh::generateOrthohedron(width, height, depth);
 }
 Mesa::Mesa() {
-	glm::vec3 color = glm::vec3(1.0f, 1.0f, 0.0f);
 
 	Orthohedron* pata1 = new Orthohedron(10, 30, 10);
-	pata1->setColor(color);
+	Material mMaterial = Material();
+	mMaterial.setWood();
+
+	pata1->setMaterial(mMaterial);
+	
 	pata1->move(glm::vec3(-20.0f, 0.0f, -20.0f));
 	addEntity(pata1);
 	Orthohedron* pata2 = new Orthohedron(10, 30, 10);
-	pata2->setColor(color);
+	pata2->setMaterial(mMaterial);
 	pata2->move(glm::vec3(-20.0f, 0.0f, 20.0f));
 	addEntity(pata2);
 	Orthohedron* pata3 = new Orthohedron(10, 30, 10);
-	pata3->setColor(color);
+	pata3->setMaterial(mMaterial);
 	pata3->move(glm::vec3(20.0f, 0.0f, -20.0f));
 	addEntity(pata3);
 	Orthohedron* pata4 = new Orthohedron(10, 30, 10);
-	pata4->setColor(color);
+	pata4->setMaterial(mMaterial);
 	pata4->move(glm::vec3(20.0f, 0.0f, 20.0f));
 	addEntity(pata4);
 	Orthohedron* superficie = new Orthohedron(60, 10, 60);
-	superficie->setColor(color);
+	superficie->setMaterial(mMaterial);
 	superficie->move(glm::vec3(0.f, 15.0f, 0.0f));
 	addEntity(superficie);
+}
+
+Silla::Silla() {
+	Material mMaterial = Material();
+	mMaterial.setWood();
+
+	Orthohedron* trasera = new Orthohedron(30, 60, 10);
+	trasera->setMaterial(mMaterial);
+	trasera->move(glm::vec3(0.0f, 30.0f, -10.0f));
+	addEntity(trasera);
+	Orthohedron* asiento = new Orthohedron(30, 10, 20);
+	asiento->setMaterial(mMaterial);
+	asiento->move(glm::vec3(0.0f, 20.0f, 0.0f));
+	addEntity(asiento);
+
+	Orthohedron* delantera = new Orthohedron(30, 25, 10);
+	delantera->setMaterial(mMaterial);
+	delantera->move(glm::vec3(0.0f, 12.0f, 15.0f));
+	addEntity(delantera);
+
+	Orthohedron* colchon = new Orthohedron(30, 5, 25);
+	colchon->setColor(vec3(1.0f,0.93f ,0.68f));
+	colchon->move(glm::vec3(0.0f, 28.0f, 8.0f));
+	addEntity(colchon);
+
 }
 
 BaseLampara::BaseLampara(GLuint nSamples) {
@@ -1844,7 +1872,7 @@ Window::Window(GLdouble width, GLdouble height, GLubyte alpha, glm::dvec4 mColor
 	luzNatural->setEnabled(true);
 	luzNatural->setPosition(glm::vec4(0, 0, 100, 1));
 	luzNatural->setDirection(glm::vec3(0, 0, -1));
-	luzNatural->setCutoff(45, 50);
+	luzNatural->setCutoff(45, 80);
 
 }
 
@@ -1978,4 +2006,96 @@ Habitacion::Habitacion(GLdouble w, GLdouble h) {
 	window->rotate(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	window->move(glm::vec3(w*0.5, h*0.5, 0));
 	addEntity(window);
+}
+
+Forniture::Forniture() {
+	std::vector<vec2> perfil;
+	GLuint nSamples = 180;
+	//perfil para la base 
+	for (size_t i = 0; i < 6; i++)
+	{
+		perfil.push_back({ 20, i });
+	}
+	//perfil para la parte media
+	for (size_t i = 6; i < 46; i++)
+	{
+		perfil.push_back({ 10, i });
+	}
+	//perfil para la parte superior
+	for (size_t i = 40; i < 48; i++)
+	{
+		perfil.push_back({ 60, i });
+	}
+	// perfil para la tapa
+	for (int i = 60; i >= 0; i--)
+	{
+		perfil.push_back({ i, 48 });
+	}
+
+
+	mMaterial = Material();
+	mMaterial.setWood();
+
+	mMesh = IndexMesh::generateByRevolution(perfil, nSamples);
+}
+
+FarolaBase::FarolaBase() {
+	std::vector<vec2> perfil;
+	GLuint nSamples = 180;
+	//perfil para la base 
+	for (size_t i = 0; i < 10; i++)
+	{
+		perfil.push_back({ 20, i });
+	}
+	//perfil para la parte media
+	for (size_t i = 10; i < 100; i++)
+	{
+		perfil.push_back({ 5, i });
+	}
+	setColor(glm::dvec4(0.05, 0.05, 0.1, 1.0));
+	mMesh = IndexMesh::generateByRevolution(perfil, nSamples);
+}
+
+Farola::Farola() {
+
+	mShader = Shader::get("texturelight");
+
+	FarolaBase* base = new FarolaBase();
+	addEntity(base);
+
+	Sphere* bombilla = new Sphere(20, 60, 60);
+	bombilla->setColor(glm::dvec4(1.0, 1.0, 1.0, 1.0));
+	bombilla->move(glm::vec3(0.0f, 100.0f, 0.0f));
+	addEntity(bombilla);
+	foco->setAmb(glm::vec4(.25, .25, .25, 1));
+	foco->setDiff(glm::vec4(.7, .7, .7, 1));
+	foco->setSpec(glm::vec4(0, 0.2, 0, 1));
+	foco->setEnabled(true);
+	foco->setPosition(glm::vec4(0, 100, 0, 1));
+	foco->setDirection(glm::vec3(0, -1, 0));
+	foco->setCutoff(45, 90);
+
+
+
+	Cone* tapa = new Cone(20, 6, 0, 20, 20);
+	tapa->setColor(glm::dvec4(0.05, 0.05, 0.1, 1.0));
+	tapa->move(glm::vec3(0.0f, 120.0f, 0.0f));
+	addEntity(tapa);
+
+}
+
+Farola::~Farola() {
+	delete foco;
+	foco = nullptr;
+}
+
+void
+Farola::render(const glm::mat4& modelViewMat) const
+{
+	mShader->use();
+
+	foco->upload(*mShader, modelViewMat * mModelMat);
+	for (Abs_Entity* obj : gObjects) {
+		obj->render(modelViewMat * mModelMat);
+	}
 }

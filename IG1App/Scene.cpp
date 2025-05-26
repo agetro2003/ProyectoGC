@@ -72,6 +72,7 @@ void
 Scene1::init()
 {
 	Scene::init();
+	
 	dirLight->setEnabled(false);
 
 	
@@ -119,6 +120,22 @@ Scene1::init()
 	habitacion->move(glm::vec3(0, 1, 0));
 	gObjects.push_back(habitacion);
 
+	Forniture* forniture = new Forniture();
+	forniture->move(glm::vec3(-100, 1, 100));
+	gObjects.push_back(forniture);
+
+	Silla* silla = new Silla();
+	silla->move(glm::vec3(-100, 1, 20));
+	gObjects.push_back(silla);
+
+
+	Farola* farola = new Farola();
+	farola->move(glm::vec3(-150, 1, -300));
+	gObjects.push_back(farola);
+
+	gCoObjects.push_back(new CoalitionEntity({ silla, 50 }));
+	gCoObjects.push_back(new CoalitionEntity({ farola, 30 })); 
+	gCoObjects.push_back(new CoalitionEntity({ forniture, 90 })); 
 	gCoObjects.push_back(new CoalitionEntity({ mesa, 60 }));
 	gCoObjects.push_back(new CoalitionEntity({ habitacion, 400 }));
 
