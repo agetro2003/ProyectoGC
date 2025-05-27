@@ -528,7 +528,7 @@ Scene::setGL()
 {
 	// OpenGL basic setting
 	//glClearColor(1.0, 1.0, 1.0, 1.0); // background color (alpha=1 -> opaque) 
-	glClearColor(0.6, 0.7, 0.8, 1.0); // New background color (alpha=1 -> opaque)
+	glClearColor(0.7, 1, 1, 1.0); // New background color (alpha=1 -> opaque)
 	glEnable(GL_DEPTH_TEST);          // enable Depth test
 //	glEnable(GL_TEXTURE_2D);
 }

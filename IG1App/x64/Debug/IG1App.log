@@ -1,7 +1,5 @@
 ﻿  Scene.cpp
 C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Scene.cpp(148,14): warning C4244: 'inicializando': conversión de 'double' a 'int'; posible pérdida de datos
-C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Scene.cpp(531,25): warning C4305: 'argumento': truncamiento de 'double' a 'GLclampf'
-C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Scene.cpp(531,20): warning C4305: 'argumento': truncamiento de 'double' a 'GLclampf'
 C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Scene.cpp(531,15): warning C4305: 'argumento': truncamiento de 'double' a 'GLclampf'
 C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\IG1App\Scene.cpp(460,1): warning C4715: 'Scene8::handleKey': no todas las rutas de acceso de control devuelven un valor
   IG1App.vcxproj -> C:\Users\jesus\OneDrive\Documents\Master UCM\Graficos por Computador\ProyectoGC\bin\IG1AppDebug.exe
